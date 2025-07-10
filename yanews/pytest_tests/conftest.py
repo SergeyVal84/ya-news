@@ -1,5 +1,6 @@
 import pytest
 from django.conf import settings
+from datetime import datetime, timedelta
 
 # Импортируем класс клиента.
 from django.test.client import Client
@@ -46,7 +47,8 @@ def comments(client, author, news):
 
 @pytest.fixture
 def news_list(client):
-    news_list_object = [News(title=f'Заголовок {index}', text='Текст') for index in range(settings.NEWS_COUNT_ON_HOME_PAGE*10)]
+    today = datetime.today()
+    news_list_object = [News(title=f'Заголовок {index}', text='Текст', date=today - timedelta(days=index)) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE*10)]
     News.objects.bulk_create(news_list_object)
     return news_list_object
 

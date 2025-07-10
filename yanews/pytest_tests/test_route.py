@@ -2,6 +2,7 @@ from http import HTTPStatus
 import pytest
 from django.urls import reverse
 from pytest_lazy_fixtures import lf
+from pytest_django.asserts import assertRedirects
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -39,4 +40,13 @@ def test_author_can_delete_edit_only_his_comments(parametrized_client, name, com
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
 
-
+@pytest.mark.parametrize(
+    'name',
+    ('news:edit', 'news:delete'),
+)
+def test_anonimus_cant_edit_delete(client, name, comments):
+    login_url = reverse('users:login')
+    url = reverse(name, args=(comments.id,))
+    expected_url = f'{login_url}?next={url}'
+    response = client.get(url)
+    assertRedirects(response, expected_url)

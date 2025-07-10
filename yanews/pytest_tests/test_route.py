@@ -1,14 +1,15 @@
 from http import HTTPStatus
-
+import pytest
 from django.urls import reverse
 
-
+@pytest.mark.django_db
 @pytest.mark.parametrize(
-    'name',
-    ('news:home', 'users:login', 'users:logout', 'users:signup')
+    'name, method',
+    [('news:home', 'get'), ('users:login', 'get'), ('users:logout', 'post'), ('users:signup', 'get')]
 )
-# Указываем имя изменяемого параметра в сигнатуре теста.
-def test_pages_availability_for_anonymous_user(client, name):
+def test_pages_availability_for_anonymous_user(client, name, method):
+    # ваш тест здесь
+
     url = reverse(name)  # Получаем ссылку на нужный адрес.
-    response = client.get(url)  # Выполняем запрос.
-    assert response.status_code == HTTPStatus.OK 
+    response = getattr(client, method)(url)  # Выполняем запрос.
+    assert response.status_code == HTTPStatus.OK

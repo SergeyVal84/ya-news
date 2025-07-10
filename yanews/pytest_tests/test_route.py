@@ -8,8 +8,12 @@ from django.urls import reverse
     [('news:home', 'get'), ('users:login', 'get'), ('users:logout', 'post'), ('users:signup', 'get')]
 )
 def test_pages_availability_for_anonymous_user(client, name, method):
-    # ваш тест здесь
+    url = reverse(name)
+    response = getattr(client, method)(url)
+    assert response.status_code == HTTPStatus.OK
 
-    url = reverse(name)  # Получаем ссылку на нужный адрес.
-    response = getattr(client, method)(url)  # Выполняем запрос.
+@pytest.mark.django_db
+def test_news_availability_for_anonymous_user(client, news):
+    url = reverse('news:detail', kwargs={'pk': news.pk})
+    response = client.get(url)
     assert response.status_code == HTTPStatus.OK

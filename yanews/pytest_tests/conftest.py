@@ -27,10 +27,11 @@ def not_author_client(not_author):
     return client
 
 @pytest.fixture
-def news(author):
-    News.objects.create(
+def news(client):
+    news_object = News.objects.create(
         title='Заголовок',
         text='Текст',
-        date='Дата',
-        author=author
+        # date='Дата',
+        # pk=news.pk
     )
+    return news_object

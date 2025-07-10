@@ -31,7 +31,5 @@ def news(client):
     news_object = News.objects.create(
         title='Заголовок',
         text='Текст',
-        # date='Дата',
-        # pk=news.pk
     )
     return news_object

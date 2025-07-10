@@ -1,6 +1,7 @@
 from http import HTTPStatus
 import pytest
 from django.urls import reverse
+from pytest_lazy_fixtures import lf
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -23,12 +24,19 @@ def test_pages_availability_for_anonymous_user(client, news, name, method, kwarg
     assert response.status_code == HTTPStatus.OK
 
 @pytest.mark.parametrize(
+    'parametrized_client, expected_status',
+    [
+        (lf('not_author_client'), HTTPStatus.NOT_FOUND),
+        (lf('author_client'), HTTPStatus.OK)
+    ],
+)
+@pytest.mark.parametrize(
     'name',
     ('news:edit', 'news:delete'),
 )
-def test_author_can_delete_edit_comments(author_client, name, comments):
+def test_author_can_delete_edit_only_his_comments(parametrized_client, name, comments, expected_status):
     url = reverse(name, args=(comments.id,))
-    response = author_client.get(url)
-    assert response.status_code == HTTPStatus.OK 
+    response = parametrized_client.get(url)
+    assert response.status_code == expected_status
 
 

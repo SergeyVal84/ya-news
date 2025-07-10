@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 
 # Импортируем класс клиента.
 from django.test.client import Client
@@ -42,3 +43,10 @@ def comments(client, author, news):
         text='Текст',
     )
     return comment_object
+
+@pytest.fixture
+def news_list(client):
+    news_list_object = [News(title=f'Заголовок {index}', text='Текст') for index in range(settings.NEWS_COUNT_ON_HOME_PAGE*10)]
+    News.objects.bulk_create(news_list_object)
+    return news_list_object
+

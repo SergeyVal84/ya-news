@@ -64,7 +64,12 @@ class TestRoutes(TestCase):
                 # и получаем адрес страницы для GET-запроса:
                 url = reverse(name, args=args)
                 response = self.client.get(url)
-                self.assertEqual(response.status_code, HTTPStatus.OK) 
+                self.assertEqual(response.status_code, HTTPStatus.OK)
+        
+    def test_pages_availability(self):
+        url = reverse('users:logout')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, HTTPStatus.OK) 
 
     def test_redirect_for_anonymous_client(self):
         # Сохраняем адрес страницы логина:

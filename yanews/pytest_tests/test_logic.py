@@ -47,5 +47,17 @@ def test_author_can_edit_only_his_comments(not_author_client, news, comments, fo
     assert response.status_code == HTTPStatus.FOUND
     comments_from_db = Comment.objects.get(id=news.id)
     assert comments.text == comments_from_db.text
-    
 
+def test_author_can_delete_comments(author_client, news, comments):
+    url = reverse('news:delete', kwargs={'pk': news.pk})
+    response = author_client.post(url)
+    assertRedirects(response, reverse('news:detail', kwargs={'pk': comments.news.pk}) + '#comments')
+    assert Comment.objects.count() == 0
+
+
+def test_other_user_cant_delete_comments(not_author_client, news, comments):
+    url = reverse('news:delete', kwargs={'pk': news.pk})
+    response = not_author_client.post(url)
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert Comment.objects.count() == 1
+    

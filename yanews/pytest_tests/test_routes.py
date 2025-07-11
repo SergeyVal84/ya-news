@@ -1,8 +1,11 @@
 from http import HTTPStatus
-import pytest
+
 from django.urls import reverse
-from pytest_lazy_fixtures import lf
+
+import pytest
 from pytest_django.asserts import assertRedirects
+from pytest_lazy_fixtures import lf
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -15,7 +18,9 @@ from pytest_django.asserts import assertRedirects
         ('news:detail', 'get', {'pk': None})
     ]
 )
-def test_pages_availability_for_anonymous_user(client, news, name, method, kwargs):
+def test_pages_availability_for_anonymous_user(
+    client, news, name, method, kwargs
+):
     if kwargs is None:
         url = reverse(name)
     else:
@@ -23,6 +28,7 @@ def test_pages_availability_for_anonymous_user(client, news, name, method, kwarg
         url = reverse(name, kwargs=kwargs)
     response = getattr(client, method)(url)
     assert response.status_code == HTTPStatus.OK
+
 
 @pytest.mark.parametrize(
     'parametrized_client, expected_status',
@@ -35,10 +41,13 @@ def test_pages_availability_for_anonymous_user(client, news, name, method, kwarg
     'name',
     ('news:edit', 'news:delete'),
 )
-def test_author_can_delete_edit_only_his_comments(parametrized_client, name, comments, expected_status):
+def test_author_can_delete_edit_only_his_comments(
+    parametrized_client, name, comments, expected_status
+):
     url = reverse(name, args=(comments.id,))
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
+
 
 @pytest.mark.parametrize(
     'name',

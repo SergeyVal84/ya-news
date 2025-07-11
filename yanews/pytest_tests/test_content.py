@@ -1,7 +1,10 @@
 from django.urls import reverse
+
 import pytest
-from news.forms import CommentForm
 from pytest_lazy_fixtures import lf
+
+from news.forms import CommentForm
+
 
 @pytest.mark.django_db
 def test_news_count_sorted(client, news_list):
@@ -13,6 +16,7 @@ def test_news_count_sorted(client, news_list):
     assert len(news_list) <= 10
     assert sorted_date == all_date
 
+
 @pytest.mark.django_db
 def test_comments_sorted(client, comments_list, comments, news):
     url = reverse('news:detail', kwargs={'pk': news.pk})
@@ -22,6 +26,7 @@ def test_comments_sorted(client, comments_list, comments, news):
     all_comments_date = [comments.created for comments in comments_list]
     sorted_comments_date = sorted(all_comments_date)
     assert sorted_comments_date == all_comments_date
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(

@@ -22,7 +22,7 @@ class TestCommentCreation(TestCase):
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'text': cls.COMMENT_TEXT}
 
-    def test_anonymous_user_cant_create_comment(self):    
+    def test_anonymous_user_cant_create_comment(self):
         self.client.post(self.url, data=self.form_data)
         comments_count = Comment.objects.count()
         self.assertEqual(comments_count, 0)
@@ -47,7 +47,7 @@ class TestCommentCreation(TestCase):
             errors=WARNING
         )
         comments_count = Comment.objects.count()
-        self.assertEqual(comments_count, 0) 
+        self.assertEqual(comments_count, 0)
 
 
 class TestCommentEditDelete(TestCase):
@@ -98,4 +98,3 @@ class TestCommentEditDelete(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         self.comment.refresh_from_db()
         self.assertEqual(self.comment.text, self.COMMENT_TEXT)
-              

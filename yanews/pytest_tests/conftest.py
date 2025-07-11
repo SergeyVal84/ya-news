@@ -68,4 +68,4 @@ def comments_list(news, author):
 
 @pytest.fixture
 def form_data(news, author):
-    return {'news': news, 'author': author, 'text': 'Tекст',}
+    return {'news': news, 'author': author, 'text': 'Новый текст',}

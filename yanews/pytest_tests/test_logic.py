@@ -3,6 +3,8 @@ import pytest
 from django.urls import reverse
 from news.forms import BAD_WORDS, WARNING
 from news.models import Comment, News
+from pytest_lazy_fixtures import lf
+from http import HTTPStatus
 
 
 def test_user_can_create_comment(author_client, author, form_data, news):
@@ -31,3 +33,19 @@ def test_user_cant_use_bad_words(author_client, form_data, news):
     form = response.context['form']
     assert Comment.objects.count() == 0
     assert form.errors
+
+def test_author_can_edit_only_his_comments(author_client, news, comments, form_data):
+    url = reverse('news:detail', kwargs={'pk': news.pk})
+    response = author_client.post(url, form_data)
+    assertRedirects(response, reverse('news:detail', kwargs={'pk': news.pk}) +'#comments')
+    comments.refresh_from_db()
+    assert comments.text != form_data['text']
+
+def test_author_can_edit_only_his_comments(not_author_client, news, comments, form_data):
+    url = reverse('news:detail', kwargs={'pk': news.pk})
+    response = not_author_client.post(url, form_data)
+    assert response.status_code == HTTPStatus.FOUND
+    comments_from_db = Comment.objects.get(id=news.id)
+    assert comments.text == comments_from_db.text
+    
+

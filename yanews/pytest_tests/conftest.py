@@ -1,12 +1,16 @@
 import pytest
 from django.conf import settings
 from datetime import datetime, timedelta
-
+from django.utils import timezone
 # Импортируем класс клиента.
 from django.test.client import Client
 
 # Импортируем модель заметки, чтобы создать экземпляр.
 from news.models import News, Comment
+
+@pytest.fixture
+def anonymous_client():
+    return Client()
 
 @pytest.fixture
 def author(django_user_model):
@@ -47,14 +51,17 @@ def comments(client, author, news):
 
 @pytest.fixture
 def news_list(client):
-    today = datetime.today()
+    today = timezone.now()
     news_list_object = [News(title=f'Заголовок {index}', text='Текст', date=today - timedelta(days=index)) for index in range(settings.NEWS_COUNT_ON_HOME_PAGE*10)]
     News.objects.bulk_create(news_list_object)
     return news_list_object
 
 @pytest.fixture
-def comments_list(client, news, comments, author):
-    today = datetime.today()
-    comments_list_object = [Comment(news=news, author=author, text=f'Текст {index}', created=today - timedelta(days=index)) for index in range(10)]
-    Comment.objects.bulk_create(comments_list_object)
-    return comments_list_object
+def comments_list(news, author):
+    now = timezone.now()
+    for index in range(10):
+        comment = Comment.objects.create(
+            news=news, author=author, text=f'Tекст {index}',
+        )
+        comment.created = now + timedelta(days=index)
+        comment.save()

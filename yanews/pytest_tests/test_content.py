@@ -1,7 +1,7 @@
-from django.urls import reverse
-
 import pytest
 from pytest_lazy_fixtures import lf
+
+from django.urls import reverse
 
 from news.forms import CommentForm
 

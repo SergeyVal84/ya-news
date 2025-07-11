@@ -52,3 +52,9 @@ def news_list(client):
     News.objects.bulk_create(news_list_object)
     return news_list_object
 
+@pytest.fixture
+def comments_list(client, news, comments, author):
+    today = datetime.today()
+    comments_list_object = [Comment(news=news, author=author, text=f'Текст {index}', created=today - timedelta(days=index)) for index in range(10)]
+    Comment.objects.bulk_create(comments_list_object)
+    return comments_list_object

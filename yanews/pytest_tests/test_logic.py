@@ -8,6 +8,7 @@ from news.models import Comment, News
 def test_user_can_create_comment(author_client, author, form_data, news):
     url = reverse('news:detail', kwargs={'pk': news.pk})
     response = author_client.post(url, data=form_data)
+    assertRedirects(response, reverse('news:detail', kwargs={'pk': news.pk}) +'#comments')
     assert Comment.objects.count() == 1
     new_comment = Comment.objects.get()
     assert new_comment.news == news

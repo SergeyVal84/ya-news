@@ -24,8 +24,10 @@ def test_anonymous_can_not_create_comment(client, form_data, news):
     assertRedirects(response, expected_url)
     assert Comment.objects.count() == 0
 
-def test_user_cant_use_bad_words(author_client, author, form_data, news):
+def test_user_cant_use_bad_words(author_client, form_data, news):
     url = reverse('news:detail', kwargs={'pk': news.pk})
     form_data['text'] = f'Какой-то текст, {BAD_WORDS[0]}'
     response = author_client.post(url, data=form_data)
+    form = response.context['form']
     assert Comment.objects.count() == 0
+    assert form.errors
